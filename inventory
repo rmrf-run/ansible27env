@@ -4,5 +4,9 @@ control.test.example.com ansible_host=192.168.55.60 ansible_user=vagrant ansible
 node1.test.example.com ansible_host=192.168.55.61 ansible_user=vagrant ansible_ssh_pass=vagrant ansible_python_interpreter=/usr/bin/python
 [node2]
 node2.test.example.com ansible_host=192.168.55.62 ansible_user=vagrant ansible_ssh_pass=vagrant ansible_python_interpreter=/usr/bin/python
+[node3]
+node3.test.example.com ansible_host=192.168.55.63 ansible_user=vagrant ansible_ssh_pass=vagrant ansible_python_interpreter=/usr/bin/python
+[node4]
+node4.test.example.com ansible_host=192.168.55.64 ansible_user=vagrant ansible_ssh_pass=vagrant ansible_python_interpreter=/usr/bin/python
 [repo]
 repo.test.example.com ansible_host=192.168.55.59 ansible_user=vagrant ansible_ssh_pass=vagrant ansible_python_interpreter=/usr/bin/python
