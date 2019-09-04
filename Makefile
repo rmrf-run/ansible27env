@@ -9,6 +9,8 @@ prep:
 	vagrant plugin install vagrant-guest_ansible
 up:
 	vagrant up
+provision:
+	vagrant provision
 down:
 	vagrant suspend
 destroy:

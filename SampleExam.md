@@ -17,7 +17,7 @@ node4.test.example.com – managed host
 There are a couple of requirements that should be met before proceeding further:
 
 control.test.example.com server has passwordless SSH access to all managed servers (using the root user).
-node4.test.example.com server has a 1GB secondary /dev/sdb disk attached.
+node4.test.example.com server has a 1GB secondary `/dev/sdb` disk attached.
 There are no regular users created on any of the servers.
 
 Tips and Suggestions
@@ -42,17 +42,17 @@ Install ansible package on the control node (including any dependencies) and con
 - Ansible should connect to all managed nodes using the automation user.
 - Create an inventory file `/home/automation/plays/inventory` with the following:
 
-server1.lab.example.com is a member of the proxy host group.
-server2.lab.example.com is a member of the webservers host group.
-server3.lab.example.com is a member of the webservers host group.
-server4.lab.example.com is a member of the database host group.
+node1.test.example.com is a member of the proxy host group.
+node2.test.example.com is a member of the webservers host group.
+node3.test.example.com is a member of the webservers host group.
+node4.test.example.com is a member of the database host group.
 
 ### Task 2: Ad-Hoc Commands
 
 Create an SSH keypair. Write a script /home/automation/plays/adhoc that uses Ansible ad-hoc commands to achieve the following:
 
 - User `automation` is created on all inventory hosts.
-- SSH key (that you generated) is copied to all inventory hosts for the automation user and stored in /`home/automation/.ssh/authorized_keys`.
+- SSH key (that you generated) is copied to all inventory hosts for the automation user and stored in `/home/automation/.ssh/authorized_keys`.
 - The automation user is allowed to elevate privileges on all inventory hosts without having to provide a password.
 - After running the adhoc script, you should be able to SSH into all inventory hosts using the automation user without password, as well as a run all privileged commands.
 
