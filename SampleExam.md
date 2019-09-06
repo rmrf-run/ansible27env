@@ -42,10 +42,10 @@ Install ansible package on the control node (including any dependencies) and con
 - Ansible should connect to all managed nodes using the automation user.
 - Create an inventory file `/home/automation/plays/inventory` with the following:
 
-node1.test.example.com is a member of the proxy host group.
-node2.test.example.com is a member of the webservers host group.
-node3.test.example.com is a member of the webservers host group.
-node4.test.example.com is a member of the database host group.
+node1.test.example.com is a member of the `proxy` host group.
+node2.test.example.com is a member of the `webserver` host group.
+node3.test.example.com is a member of the `webserver` host group.
+node4.test.example.com is a member of the `database` host group.
 
 ### Task 2: Ad-Hoc Commands
 
@@ -75,11 +75,11 @@ Create a playbook `/home/automation/plays/sshd.yml` that runs on all inventory h
 
 ### Task 5: Ansible Vault
 
-Create Ansible vault file `/home/automation/plays/secret.yml`. Encryption/decryption password is devops.
+Create Ansible vault file `/home/automation/plays/secret.yml`. Encryption/decryption password is `devops`.
 Add the following variables to the vault:
 
-- `user_password` with value of devops
-- `database_password` with value of devops
+- `user_password` with value of `devops`
+- `database_password` with value of `devops`
 - Store Ansible vault password in the file `/home/automation/plays/vault_key`.
 
 ### Task 6: Users and Groups
@@ -102,8 +102,8 @@ Use `/home/automation/plays/vars/user_list.yml` file to save this content.
 
 Create a playbook `/home/automation/plays/users.yml` that uses the vault file `/home/automation/plays/secret.yml` to achieve the following:
 
-- Users whose user ID starts with 1 should be created on servers in the webservers host group. User password should be used from the `user_password` variable.
-- Users whose user ID starts with 2 should be created on servers in the database host group. User password should be used from the `user_password` variable.
+- Users whose user ID starts with 1 should be created on servers in the `webserver` host group. User password should be used from the `user_password` variable.
+- Users whose user ID starts with 2 should be created on servers in the `database` host group. User password should be used from the `user_password` variable.
 - All users should be members of a supplementary group wheel.
 - Shell should be set to /bin/bash for all users.
 - Account passwords should use the SHA512 hash format.
@@ -112,14 +112,14 @@ Create a playbook `/home/automation/plays/users.yml` that uses the vault file `/
 
 ### Task 7: Scheduled Tasks
 
-Create a playbook `/home/automation/plays/regular_tasks.yml` that runs on servers in the proxyhost group and does the following:
+Create a playbook `/home/automation/plays/regular_tasks.yml` that runs on servers in the proxy host group and does the following:
 
 - A root crontab record is created that runs every hour.
 - The cron job appends the file `/var/log/time.log` with the output from the date command.
 
 ### Task 8: Software Repositories
 
-Create a playbook /home/automation/plays/repository.yml that runs on servers in the databasehost group and does the following:
+Create a playbook `/home/automation/plays/repository.yml` that runs on servers in the `database` host group and does the following:
 
 - A YUM repository file is created.
 - The name of the repository is mysql56-community.
@@ -135,19 +135,20 @@ Create a role called `sample-mysql` and store it in `/home/automation/plays/role
 
 - A primary partition number 1 of size 800MB on device `/dev/sdb` is created.
 - An LVM volume group called `vg_database` is created that uses the primary partition created above.
-- An LVM logical volume called `lv_mysql` is created of size 512MB in the volume group vg_database.
+- An LVM logical volume called `lv_mysql` is created of size 512MB in the volume group `vg_database`.
 - An XFS filesystem on the logical volume `lv_mysql` is created.
 - Logical volume `lv_mysql` is permanently mounted on `/mnt/mysql_backups`.
 - `mysql-community-server` package is installed.
 - Firewall is configured to allow all incoming traffic on MySQL port TCP 3306.
 - MySQL root user password should be set from the variable `database_password` (see task #5).
 - MySQL server should be started and enabled on boot.
-- MySQL server configuration file is generated from the my.cnf.j2 Jinja2 template with the following content:
+- MySQL server configuration file is generated from the `my.cnf.j2` Jinja2 template with the following content:
 
 ```
 [mysqld]
 bind_address = {{ ansible_default_ipv4.address }}
-skip_name_resolve datadir=/var/lib/mysql
+skip_name_resolve
+datadir=/var/lib/mysql
 socket=/var/lib/mysql/mysql.sock
 symbolic-links=0
 sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
@@ -156,64 +157,75 @@ log-error=/var/log/mysqld.log
 pid-file=/var/run/mysqld/mysqld.pid
 ```
 
-Create a playbook `/home/automation/plays/mysql.yml` that uses the role and runs on hosts in the database host group.
+_This requires and extra package to be installed if using `mysql_user`_
+
+Create a playbook `/home/automation/plays/mysql.yml` that uses the role and runs on hosts in the `database` host group.
 
 ### Task 10: Create and Work with Roles (Some More)
 
-Create a role called sample-apache and store it in `/home/automation/plays/roles`. The role should satisfy the following requirements:
+Create a role called `sample-apache` and store it in `/home/automation/plays/roles`. The role should satisfy the following requirements:
 
-- The httpd, mod_ssl and php packages are installed.
+- The `httpd`, `mod_ssl` and `php` packages are installed.
 - Apache service is running and enabled on boot.
 - Firewall is configured to allow all incoming traffic on HTTP port TCP 80 and HTTPS port TCP 443.
-- Apache service should be restarted every time the file /var/www/html/index.html is modified.
-- A Jinja2 template file index.html.j2 is used to create the file /var/www/html/index.html with the following content:
+- Apache service should be restarted every time the file `/var/www/html/index.html` is modified.
+- A Jinja2 template file `index.html.j2` is used to create the file `/var/www/html/index.html` with the following content:
 
 ```
 The address of the server is: IPV4ADDRESS
+Server hostname is: HOSTNAME
 ```
 
 IPV4ADDRESS is the IP address of the managed node.
+HOSTNAME is FQDN or hostname from the inventory file
 
-- Create a playbook `/home/automation/plays/apache.yml`that uses the role and runs on hosts in the webservers host group.
+- Create a playbook `/home/automation/plays/apache.yml`that uses the role and runs on hosts in the `webserver` host group.
+
+If your playbook works, then doing:
+
+- `curl http://node2.test.example.com`
+- `curl http://node2.test.example.com`
+
+should return output from the web server
 
 ### Task 11: Download Roles From an Ansible Galaxy and Use Them
 
-Use Ansible Galaxy to download and install geerlingguy.haproxy role in `/home/automation/plays/roles`.
-Create a playbook `/home/automation/plays/haproxy.yml` that runs on servers in the proxy host group and does the following:
+Use Ansible Galaxy to download and install `geerlingguy.haproxy` role in `/home/automation/plays/roles`.
+Create a playbook `/home/automation/plays/haproxy.yml` that runs on servers in the `proxy` host group and does the following:
 
-- Use geerlingguy.haproxy role to load balance request between hosts in the webservers host group.
+- Use `geerlingguy.haproxy` role to load balance request between hosts in the `webserver` host group.
 - Use roundrobin load balancing method.
 - HAProxy backend servers should be configured for HTTP only (port 80).
 - Firewall is configured to allow all incoming traffic on port TCP 80.
 
-If your playbook works, then doing “curl http://ansible2.hl.local/” should return output from the web server (see task #10). Running the command again should return output from the other web server.
+If your playbook works, then doing `curl http://node1.test.example.com` should return output from the web server (see task #10). Running the command again should return output from the other web server.
 
 ### Task 12: Security
 
-Create a playbook `/home/automation/plays/selinux.yml` that runs on hosts in the webservers host group and does the following:
+Create a playbook `/home/automation/plays/selinux.yml` that runs on hosts in the `webserver` host group and does the following:
 
 - Uses the selinux RHEL system role.
-- Enables httpd_can_network_connect SELinux boolean.
+- Enables `httpd_can_network_connect` SELinux boolean.
 - The change must survive system reboot.
 
 ### Task 13: Use Conditionals to Control Play Execution
 
 Create a playbook `/home/automation/plays/sysctl.yml` that runs on all inventory hosts and does the following:
 
-- If a server has more than 2048MB of RAM, then parameter vm.swappiness is set to 10.
+- If a server has more than 2048MB of RAM, then parameter `vm.swappiness` is set to 10.
 - If a server has less than 2048MB of RAM, then the following error message is displayed:
   Server memory less than 2048MB
 
 ### Task 14: Use Archiving
 
-Create a playbook `/home/automation/plays/archive.yml` that runs on hosts in the database host group and does the following:
+Create a playbook `/home/automation/plays/archive.yml` that runs on hosts in the `database` host group and does the following:
 
-- A file `/mnt/mysql_backups/database_list.txt` is created that contains the following line: dev,test,qa,prod.
+- A file `/mnt/mysql_backups/database_list.txt` is created that contains the following line: `dev,test,qa,prod`.
 - A gzip archive of the file `/mnt/mysql_backups/database_list.txt` is created and stored in `/mnt/mysql_backups/archive.gz`.
 
 ### Task 15: Work with Ansible Facts
 
-Create a playbook `/home/automation/plays/facts.yml` that runs on hosts in the database host group and does the following:
+Create a playbook `/home/automation/plays/facts.yml` that runs on hosts in the `database` host group and does the following:
 
 - A custom Ansible fact `server_role=mysql` is created that can be retrieved from `ansible_local.custom.sample_exam` when using Ansible setup module.
 
@@ -221,12 +233,12 @@ Create a playbook `/home/automation/plays/facts.yml` that runs on hosts in the d
 
 Create a playbook `/home/automation/plays/packages.yml` that runs on all inventory hosts and does the following:
 
-- Installs tcpdump and mailx packages on hosts in the proxy host groups.
-- Installs lsof and mailx and packages on hosts in the database host groups.
+- Installs `tcpdump` and `mailx` packages on hosts in the `proxy` host groups.
+- Installs `lsof` and `mailx` and packages on hosts in the `database` host groups.
 
 ### Task 17: Services
 
-Create a playbook `/home/automation/plays/target.yml` that runs on hosts in the webserver host group and does the following:
+Create a playbook `/home/automation/plays/target.yml` that runs on hosts in the `webserver` host group and does the following:
 
 - Sets the default boot target to multi-user.
 
@@ -243,7 +255,7 @@ Playbook uses a Jinja2 template server_list.j2 to create a file `/etc/server_lis
 - After running the playbook, the content of the file `/etc/server_list.txt` should be the following:
 
 ```
-server1.lab.example.com server2.lab.example.com server3.lab.example.com server4.lab.example.com server5.lab.example.com
+node1.test.example.com node2.test.example.com node3.test.example.com node4.test.example.com
 ```
 
 Note - If the FQDN of any inventory host changes, re-running the playbook should update the file with the new values.
