@@ -27,7 +27,7 @@ Some questions may depend on the outcome of others. Please read all questions be
 Sample Exam Questions
 Note - you have root access to all five servers.
 
-### Task 1: Ansible Installation and Configuration
+### Task 1: Ansible Installation and Configurationuser
 
 Install ansible package on the control node (including any dependencies) and configure the following:
 
@@ -122,10 +122,10 @@ Create a playbook `/home/automation/plays/regular_tasks.yml` that runs on server
 Create a playbook `/home/automation/plays/repository.yml` that runs on servers in the `database` host group and does the following:
 
 - A YUM repository file is created.
-- The name of the repository is mysql56-community.
-- The description of the repository is “MySQL 5.6 YUM Repo”.
-- Repository baseurl is http://repo.mysql.com/yum/mysql-5.6-community/el/7/x86_64/.
-- Repository GPG key is at http://repo.mysql.com/RPM-GPG-KEY-mysql.
+- The name of the repository is MariaDB.
+- The description of the repository is “MariaDB 10.3”.
+- Repository baseurl is http://yum.mariadb.org/10.3/centos7-amd64.
+- Repository GPG key is at https://yum.mariadb.org/RPM-GPG-KEY-MariaDB.
 - Repository GPG check is enabled.
 - Repository is enabled.
 
@@ -138,7 +138,7 @@ Create a role called `sample-mysql` and store it in `/home/automation/plays/role
 - An LVM logical volume called `lv_mysql` is created of size 512MB in the volume group `vg_database`.
 - An XFS filesystem on the logical volume `lv_mysql` is created.
 - Logical volume `lv_mysql` is permanently mounted on `/mnt/mysql_backups`.
-- `mysql-community-server` package is installed.
+- `MariaDB-server` package is installed.
 - Firewall is configured to allow all incoming traffic on MySQL port TCP 3306.
 - MySQL root user password should be set from the variable `database_password` (see task #5).
 - MySQL server should be started and enabled on boot.
@@ -184,7 +184,7 @@ HOSTNAME is FQDN or hostname from the inventory file
 If your playbook works, then doing:
 
 - `curl http://node2.test.example.com`
-- `curl http://node2.test.example.com`
+- `curl http://node3.test.example.com`
 
 should return output from the web server
 
@@ -259,3 +259,36 @@ node1.test.example.com node2.test.example.com node3.test.example.com node4.test.
 ```
 
 Note - If the FQDN of any inventory host changes, re-running the playbook should update the file with the new values.
+
+_The bonus tasks are for a little more practice and just help with getting syntax down_
+
+### Bonus Task #1
+
+Create a playbook `/home/automation/plays/time.yml` that runs on all hosts and does the following:
+
+- Uses timesync RHEL System role
+- Sets time server to `time.cloudflare.com`
+- set secondary time server to `time.nist.gov`
+- sets iburst to yes for both
+
+### Bonus Task #2
+
+Create a playbook `/home/automation/plays/epel.yml` that runs on all hosts and does the following:
+
+- Creates epel yum repository
+- name is EPEL
+- description is "EPEL yum repo"
+- Repository is disabled
+- Repository baseurl is https://dl.fedoraproject.org/pub/epel/7/x86_64/
+- Repository GPG key is https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+- Repository GPG check is enabled
+
+### Bonus Task #3
+
+Create a playbook `/home/automation/plays/build_all.yml` that combines tasks 3-18 to run through all of the lab in 1 playbook
+
+### Bonus Task #4
+
+Create a playbook `/home/automation/plays/destroy_all.yml` that reverts changes in tasks 3-18
+
+Likely nothing like this on exam but it is good to know how to handle the situation if it were to arise.

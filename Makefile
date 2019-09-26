@@ -15,3 +15,7 @@ down:
 	vagrant suspend
 destroy:
 	vagrant destroy -f
+rebuild:
+	vagrant destroy -f node1 node2 node3 node4
+	vagrant up
+	vagrant provision
